@@ -71,6 +71,13 @@
     <Compile Include="FsUnitSample.fs" />
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LessSharp\LessSharp.fsproj">
+      <Name>LessSharp</Name>
+      <Project>{d444c165-77fb-4c3e-8b2a-debfe520ccf3}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>

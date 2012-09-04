@@ -5,6 +5,11 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LessSharp", "LessSharp\Less
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Less.UnitTests", "Less.UnitTests\Less.UnitTests.fsproj", "{CAE952AF-D388-4A4B-B03B-9D834D4B5C45}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{8BE6D4E1-63C9-448D-BD66-78CD1C5FCF9D}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
