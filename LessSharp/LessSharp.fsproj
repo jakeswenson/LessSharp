@@ -57,7 +57,7 @@
     <Compile Include="Less.Ast.fs" />
     <Compile Include="Less.Parser.fs" />
     <Compile Include="Less.Interpreter.fs" />
-    <Compile Include="Less.Rewriter.fs" />
+    <Compile Include="Less.Renderer.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <None Include="packages.config" />

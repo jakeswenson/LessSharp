@@ -1,8 +1,28 @@
-﻿module Less.Rewriter
+﻿module Less.Renderer
 
 open Less.Ast
 
-let writeCss output ruleSet =
+type LessRenderer() = 
+    member this.Bind(x, f) = f x
+    member this.Yield(x) = x |> ignore
+    member this.Combine(a, b) = ()
+    member this.Delay(m) = (fun () -> m()) ()
+    member this.For(sequence, f) =
+        Seq.iter f sequence
+    member this.Zero() = ()
+
+    
+let render = LessRenderer()
+
+render {
+    yield 3
+    for x in [1;2] do
+        yield x
+} 
+
+
+
+let renderCss output ruleSet =
     let dumpSelectors w list = 
         List.iteri (fun i selectors -> 
             if i > 0 then fprintf w ", "
