@@ -65,10 +65,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library1.fs" />
+    <Compile Include="Less.Helpers.ColorTests.fs" />
     <None Include="Script.fsx" />
     <None Include="packages.config" />
-    <Compile Include="FsUnitSample.fs" />
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>

@@ -23,13 +23,6 @@ let main argv =
     printfn "%O -> HSL%A" megenta megenta.Hsl
     printfn "%O -> HSV%A" megenta megenta.Hsv
 
-
-    hsv (248.3, 0.750, 0.597)
-    |> printfn "%O"
-
-    hsv (248.3035714, 0.7504187605, 0.597)
-    |> printfn "%O"
-
     while true do
         let s = Console.ReadLine()
         parseStr s
