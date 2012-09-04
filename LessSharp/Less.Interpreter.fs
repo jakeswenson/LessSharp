@@ -22,4 +22,5 @@ let eval less =
     )  ([], Map.empty) less 
     |> fst 
     |> List.concat
+    |> List.rev
 

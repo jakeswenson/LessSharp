@@ -14,11 +14,13 @@ let selectorString = many1Chars selectorChar
 let elementSelector = selectorString |>> Element 
 let idSelector = pchar '#' >>. selectorString |>> Id
 let classSelector = pchar '.' >>. selectorString |>> Class
+let pseudoSelector = pchar ':' >>. selectorString |>> Pseudo
 
 let selectorParser = 
     choiceL [
         classSelector;
-        idSelector
+        idSelector;
+        pseudoSelector;
         elementSelector;
     ] "Selector" .>> spaces
 
@@ -65,7 +67,7 @@ let propertyValue =
 
 let ruleProperty = selectorString .>> spaces .>> pchar ':' .>> spaces .>>. propertyValue |>> Property
 
-let ruleProperties = many1 ruleProperty
+let ruleProperties = many ruleProperty
 
 let ruleBody = between (pchar '{' >>. spaces) (pchar '}' >>. spaces) ruleProperties
 

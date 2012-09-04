@@ -5,6 +5,13 @@ type Selector =
     | Id of string
     | Class of string
     | Element of string
+    | Pseudo of string
+    override this.ToString() = 
+        match this with
+        | Id id -> "#" + id
+        | Class cls -> "." + cls
+        | Pseudo cls -> ":" + cls
+        | Element element -> element
 
 type Parameter = string
 
@@ -15,6 +22,11 @@ type LiteralValue =
     | Color of Color
     | Unit of Unit * double
     | Long of int64
+    override this.ToString() = 
+        match this with 
+        | Str(s) -> s
+        | Color(c) -> c.ToString()
+        | a -> sprintf "%A" a
 
 type PropertyValue =
     | Literal of LiteralValue

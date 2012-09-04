@@ -4,6 +4,7 @@ open Less.Parser
 open Less.Interpreter
 
 open Less.Helpers
+open Less.Rewriter
 
 [<EntryPoint>]
 let main argv =
@@ -35,6 +36,9 @@ let main argv =
         |> fun a -> 
             printfn "Parsed %A" a
             eval a 
-            |> printfn "Evaled %A"
+            |> fun b ->
+                printfn "Evaled %A" b
+                writeCss Console.Out b
+                Console.Out.Flush()
 
     0

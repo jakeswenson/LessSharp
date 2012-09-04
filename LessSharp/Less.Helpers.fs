@@ -46,8 +46,8 @@ type Color =
     }
     override this.ToString() = 
         match this.A with
-        | Some A -> sprintf "RGBA(%d, %d, %d, %f)" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B) A
-        | _ -> sprintf "RGB(%d, %d, %d)" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B)
+        | Some A -> sprintf "rgba(%d, %d, %d, %f)" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B) A
+        | _ -> sprintf "rgb(%d, %d, %d)" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B)
     member this.Hsv = toHsv (this.R, this.G, this.B)
     member this.Hsl = toHsl (this.R, this.G, this.B)
     static member Zero = { R = 0.0; G = 0.0; B = 0.0; A = None }
