@@ -59,7 +59,9 @@ module ColorComponents =
     let toHsla rgb alpha = toHsl rgb |> quartet alpha
     let toHsva rgb alpha = toHsv rgb |> quartet alpha
 
-    let rgbBase h h' chroma x = 
+    let rgbBase h chroma = 
+        let h' = h / 60.0
+        let x = chroma * (1.0 - abs(h' % 2.0 - 1.0))
         if Double.IsNaN(h) then (0.0, 0.0, 0.0)
         elif h' >= 0.0 && h' < 1.0 then (chroma, x, 0.0)
         elif h' >= 1.0 && h' < 2.0 then (x, chroma, 0.0)
@@ -83,8 +85,8 @@ type Color =
         | alpha when alpha < 1.0 -> sprintf "rgba(%d, %d, %d, %O)" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B) alpha
         | _ -> sprintf "rgb(%d, %d, %d)" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B)
     
-    member this.RGB = sprintf "#%2x%2x%2x" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B)
-    member this.ARGB = sprintf "#%2X%2X%2X%2X" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B) (Color.byte this.Alpha)
+    member this.RgbHex = sprintf "#%2x%2x%2x" (Color.byte this.R) (Color.byte this.G) (Color.byte this.B)
+    member this.ArgbHex = sprintf "#%2X%2X%2X%2X" (Color.byte this.Alpha) (Color.byte this.R) (Color.byte this.G) (Color.byte this.B)
     
     member this.Hsv = ColorComponents.toHsv (this.R, this.G, this.B)
     member this.Hsl = ColorComponents.toHsl (this.R, this.G, this.B)
@@ -103,18 +105,14 @@ type Color =
 let hsv (h, s, v) = 
     let h, s, v = clampAngle h, clamp s, clamp v
     let chroma = v * s
-    let h' = h / 60.0
-    let x = chroma * (1.0 - abs(h' % 2.0 - 1.0))
-    let r1, g1, b1 = ColorComponents.rgbBase h h' chroma x
+    let r1, g1, b1 = ColorComponents.rgbBase h chroma
     let m = v - chroma
     Color.Create(r1 + m, g1 + m, b1 + m)
 
 let hsl (h, s, l) = 
     let h, s, l = clampAngle h, clamp s, clamp l
     let chroma = (1.0 - abs(2.0 * l - 1.0)) * s
-    let h' = h / 60.0
-    let x = chroma * (1.0 - abs(h' % 2.0 - 1.0))
-    let r1, g1, b1 = ColorComponents.rgbBase h h' chroma x
+    let r1, g1, b1 = ColorComponents.rgbBase h chroma
     let m = l - 0.5 * chroma
     Color.Create(r1 + m, g1 + m, b1 + m)
 
