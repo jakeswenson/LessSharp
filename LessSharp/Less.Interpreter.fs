@@ -1,4 +1,4 @@
-﻿module Less.Interpruter
+﻿module Less.Interpreter
 
 open Less.Ast
 

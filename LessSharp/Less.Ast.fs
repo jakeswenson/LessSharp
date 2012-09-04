@@ -1,4 +1,5 @@
 ﻿module Less.Ast
+open Less.Helpers
 
 type Selector = 
     | Id of string
@@ -7,8 +8,16 @@ type Selector =
 
 type Parameter = string
 
+type Unit = Em | Pixel | Percent | Ew
+
+type LiteralValue =
+    | Str of string
+    | Color of Color
+    | Unit of Unit * double
+    | Long of int64
+
 type PropertyValue =
-    | Literal of string
+    | Literal of LiteralValue
     | VariableRef of Parameter
 
 type RuleBody = 
@@ -18,6 +27,6 @@ type RuleBody =
 type LessStatement = 
     | Rule of Selector list list * RuleBody list
     | ParametricMixin of Selector list * Parameter list * RuleBody list
-    | Variable of Parameter * string
+    | Variable of Parameter * LiteralValue
 
 type LessRuleSet = LessStatement list

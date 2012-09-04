@@ -4,6 +4,7 @@ open FParsec
 open FParsec.Primitives
 open FParsec.CharParsers
 open Less.Ast
+open Less.Helpers
 
 type Parser<'t> = Parser<'t, unit>
 
@@ -23,13 +24,43 @@ let selectorParser =
 
 let ruleSelector = many1 selectorParser
 
-let literalValue =  many1CharsTill anyChar (pchar ';') .>> spaces |>> Literal
+let hexRgb : Parser<Color> =
+    let parse b = System.Byte.Parse(b, System.Globalization.NumberStyles.HexNumber)  
+    let byte = pipe2 (hex |>> string) (hex |>> string) (+) |>> parse
+    pchar '#' >>. tuple3 byte byte byte |>> (fun (r, g, b) -> Color.Create(r, g, b))
+
+let rgbaColor =
+    let intArg = pint32 .>> spaces .>> pchar ',' .>> spaces
+    pstring "rgba" >>. between (pchar '(' >>. spaces) (pchar ')' .>> spaces) (tuple4 intArg intArg intArg (pfloat .>> spaces)) 
+    |>> Color.Force
+
+let rgbColor =
+    let intArg = pint32 .>> spaces .>> pchar ',' .>> spaces
+    pstring "rgb" >>. between (pchar '(' >>. spaces) (pchar ')' .>> spaces) (tuple3 intArg intArg (pint32 .>> spaces)) 
+    |>> Color.Force
+
+let hslColor =
+    let intArg = pfloat .>> spaces .>> pchar ',' .>> spaces
+    pstring "hsl" >>. between (pchar '(' >>. spaces) (pchar ')' .>> spaces) (tuple3 intArg intArg (pfloat .>> spaces)) 
+    |>> hsl
+
+let parseColor = 
+    choiceL [
+        hexRgb;
+        rgbaColor;
+        rgbColor;
+        hslColor
+    ] "Color"
+
+
+let literalValue =  (parseColor .>> spaces .>> pchar ';' |>> Color) <|> (many1CharsTill anyChar (pchar ';') .>> spaces |>> Str) 
+let literal = literalValue |>> Literal
 let variableRef = pchar '@' >>. selectorString .>> spaces .>> pchar ';' .>> spaces |>> VariableRef
 
 let propertyValue = 
     choiceL [
         variableRef;
-        literalValue
+        literal
     ] "Property Value"
 
 let ruleProperty = selectorString .>> spaces .>> pchar ':' .>> spaces .>>. propertyValue |>> Property
@@ -42,7 +73,7 @@ let manyRuleSelectors = sepBy1 ruleSelector (pchar ',' >>. spaces)
 
 let rule = manyRuleSelectors .>> spaces .>>. ruleBody |>> Rule
 
-let variable = pchar '@' >>. selectorString .>> spaces .>> pchar ':' .>> spaces .>>. many1CharsTill anyChar (pchar ';') .>> spaces |>> Variable
+let variable = pchar '@' >>. selectorString .>> spaces .>> pchar ':' .>> spaces .>>. literalValue .>> spaces |>> Variable
 
 let lesscss = 
     choiceL [
@@ -50,14 +81,16 @@ let lesscss =
         rule
     ] "less css"
 
-let manyRules =  many1 lesscss 
+let lessRuleSet =  many1 lesscss 
 
-let parseFile file = runParserOnFile manyRules () file System.Text.Encoding.UTF8 
+let lessCss = lessRuleSet .>> eof
+
+let parseFile file = runParserOnFile lessCss () file System.Text.Encoding.UTF8 
 let parseStr str = 
     match str with
     | null -> []
     | str -> 
-        match runParserOnString manyRules () "input" str with
+        match runParserOnString lessCss () "input" str with
         | Success(result, state, pos) -> result
         | Failure(msg, err, state) -> 
             printfn "Error parsing: %s" msg
